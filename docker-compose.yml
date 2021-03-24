@@ -5,10 +5,10 @@ services:
   nodejs:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker.io/andrewdarley/node-kubernetes:v1.0
     image: nodejs
     container_name: nodejs
-    restart: unless-stopped
+    restart: always
     env_file: .env
     environment:
       - MONGO_USERNAME=$MONGO_USERNAME
@@ -28,7 +28,7 @@ services:
   db:
     image: mongo:4.1.8-xenial
     container_name: db
-    restart: unless-stopped
+    restart: always
     env_file: .env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
@@ -43,5 +43,4 @@ networks:
     driver: bridge
 
 volumes:
-  dbdata:
   node_modules:
