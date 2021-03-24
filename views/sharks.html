@@ -19,6 +19,8 @@
                 </li>
                 <li class="active nav-item"><a href="/sharks" class="nav-link">Sharks</a>
                 </li>
+                <li class="nav-item"><a href="/sharks/getshark" class="nav-link">List All</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -28,20 +30,29 @@
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
             <p>
                 <div class="caption">Some sharks are known to be dangerous to humans, though many more are not. The sawshark, for example, is not considered a threat to humans.
                 </div>
                 <img src="img/sawshark.jpg" alt="Sawshark">
             </p>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-4">
             <p>
                 <div class="caption">Other sharks are known to be friendly and welcoming!</div>
                 <img src="img/Baby-Shark-PNG-Photo.png" alt="Baby Shark">
+            </p> <!-- closing p from previous column -->
+        </div> <!-- closing div from previous column -->
+        <div class="col-lg-4">
+            <p>
+                <form action="/sharks/addshark" method="post">
+                    <div class="caption">Enter Your Shark</div>
+                    <input type="text" placeholder="Shark Name" name="name" <%=sharks[i].name; %>
+                    <input type="text" placeholder="Shark Character" name="character" <%=sharks[i].character; %>
+                    <button type="submit">Submit</button>
+                </form>
             </p>
-        </div>
-    </div>
-</div>
-
+        </div> <!-- closing div from column 3 -->
+    </div> <!-- closing div for row -->
+</div> <!-- closing div for container -->
 </html>

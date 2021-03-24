@@ -2,7 +2,7 @@
   "name": "nodejs-image-demo",
   "version": "1.0.0",
   "description": "nodejs image demo",
-  "author": "Sammy the Shark <sammy@example.com>",
+  "author": "SharkBaitMuhaha",
   "license": "MIT",
   "main": "app.js",
   "keywords": [
@@ -11,6 +11,11 @@
     "express"
   ],
   "dependencies": {
-    "express": "^4.16.4"
+    "ejs": "^3.1.6",
+    "express": "^4.16.4",
+    "mongoose": "^5.12.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
   }
 }
