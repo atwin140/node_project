@@ -1,29 +1,29 @@
-apiVersion: extensions/v1beta1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.18.0 (06a2e56)
-  creationTimestamp: null
+  name: nodejs-v1
   labels:
-    io.kompose.service: nodejs
-  name: nodejs
+    app: nodejs
+    version: v1
 spec:
-  replicas: 1
-  strategy:
-    type: Recreate
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs
+      version: v1
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        io.kompose.service: nodejs
+        app: nodejs
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/proxyCPULimit: 200m
+        sidecar.istio.io/proxyMemoryLimit: 256Mi
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       containers:
       - args:
-        - ./wait-for.sh
-        - db:27017
-        - --
-        - /home/node/app/node_modules/.bin/nodemon
         - app.js
         env:
         - name: MONGO_DB
@@ -48,22 +48,14 @@ spec:
             configMapKeyRef:
               key: MONGO_USERNAME
               name: nodejs-env
-        image: nodejs
+        image: registry.us.lmco.com/n3810c/nodejs-app:v6
         name: nodejs
         ports:
         - containerPort: 8080
         resources: {}
-        volumeMounts:
-        - mountPath: /home/node/node_project
-          name: nodejs-claim0
-        - mountPath: /home/node/node_modules
-          name: node-modules
+      initContainers:
+      - name: wait
+        image: registry.us.lmco.com/n3810c/busybox
+        command: ['sh','-c','until nc -z db:27071; echo waiting for db; sleep 2; done;']
       restartPolicy: Always
-      volumes:
-      - name: nodejs-claim0
-        persistentVolumeClaim:
-          claimName: nodejs-claim0
-      - name: node-modules
-        persistentVolumeClaim:
-          claimName: node-modules
 status: {}
