@@ -1,0 +1,89 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: db
+spec:
+  hosts:
+  - db
+  http:
+  - route:
+    - destination:
+        host: db
+---
+
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: mongo
+spec:
+  hosts:
+  - db.tcp.svc
+  addresses:
+  - 140.169.129.50/32 
+  ports:
+  - number: 27017
+    name: mongo
+    protocol: MONGO
+  location: MESH_EXTERNAL
+  resolution: STATIC
+  endpoints:
+  - address: 140.169.129.50
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: http-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: nodejs
+      protocol: HTTP2
+    hosts:
+      - "sharks.ad-test.apps.ocp-ugw1-dev.ecs.us.lmco.com"
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nodejs
+spec:
+  hosts:
+  - "sharks.ad-test.apps.ocp-ugw1-dev.ecs.us.lmco.com"
+  gateways:
+  - http-gateway
+  http:
+  - match:
+    - uri:
+        exact: "/"
+    - uri:
+        prefix: "/sharks"
+    - uri:
+        prefix: "/img"
+    - uri:
+        prefix: "/css"
+    route:
+    - destination:
+        host: nodejs
+        port:
+          number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: httpd
+spec:
+  host: nodejs
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN
+  subsets:
+  - name: testversion
+    labels:
+      version: v1
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN

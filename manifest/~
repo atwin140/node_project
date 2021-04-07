@@ -1,0 +1,42 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: db
+spec:
+  hosts:
+  - db
+  http:
+  - route:
+    - destination:
+        host: db
+---
+
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: extdb
+spec:
+  hosts:
+  - mymongodb.somedomain 
+  addresses:
+  - 140.169.129.50/32 
+  location: MESH_EXTERNAL
+  ports:
+  - number: 27017
+    name: mongodb
+    protocol: MONGO
+  resolution: STATIC
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: extdb
+spec:
+  hosts:
+  - extdb
+  http:
+  - route:
+    - destination:
+        host: extdb
+---
+

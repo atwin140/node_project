@@ -4,13 +4,13 @@ metadata:
   labels:
     app: nodejs
     version: v1
-    service: nodejs
-  name: nodejs
+    service: db
+  name: db
 spec:
   ports:
-  - name: http
+  - name: tcp
     protocol: TCP
-    port: 80
-    targetPort: 8080
+    port: 27017
+    targetPort: 27017
   selector:
     app: nodejs
