@@ -1,16 +1,3 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: db
-spec:
-  hosts:
-  - db
-  http:
-  - route:
-    - destination:
-        host: db
----
-
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
@@ -40,11 +27,10 @@ spec:
   servers:
   - port:
       number: 80
-      name: nodejs
-      protocol: HTTP2
+      name: http
+      protocol: HTTP
     hosts:
       - "sharks.ad-test.apps.ocp-ugw1-dev.ecs.us.lmco.com"
-
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -87,3 +73,22 @@ spec:
     trafficPolicy:
       loadBalancer:
         simple: ROUND_ROBIN
+
+
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: external-svc-https
+spec:
+  hosts:
+  - api.dropboxapi.com
+  - www.googleapis.com
+  - api.facebook.com
+  location: MESH_EXTERNAL
+  ports:
+  - number: 443
+    name: https
+    protocol: TLS
+  resolution: DNS
+
+

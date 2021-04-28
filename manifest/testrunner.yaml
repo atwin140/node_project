@@ -1,0 +1,36 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: testapp-v2
+  labels:
+    app: testapp
+    version: v2
+    tier: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: testapp
+      version: v2
+      tier: app
+  template:
+    metadata:
+      labels:
+        app: testapp
+        version: v2
+        tier: app
+      annotations:
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/proxyCPULimit: 200m
+        sidecar.istio.io/proxyMemoryLimit: 256Mi
+    spec:
+      containers:
+      - command: ["/bin/sh"]
+        args: ["-c", "sleep 500000"]
+        image: st4harborpth.core.apps.ocp-ugw1-st4.ecs.us.lmco.com/pth/centos-runner:1 
+        name: test
+        ports:
+        - containerPort: 8080
+        resources: {}
+      restartPolicy: Always
+status: {}
